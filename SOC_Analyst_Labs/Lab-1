@@ -1,0 +1,23 @@
+Let's Defend SOC Analyst Path Lab-1
+
+*****TASK-1*****
+Goal: What source IP address entered the URL 'https://github.com/apache/flink/compare'?
+
+ATTEMPT-1
+Input: Destination Address contains "What source IP address entered the URL 'https://github.com/apache/flink/compare'"
+Output: No data
+
+ATTEMPT-2
+Input: Raw Log contains "https://github.com/apache/flink/compare"
+Output: A Proxy log 
+
+Solution: The IP Address is 172.16.17.54
+
+*****TASK-2*****
+Goal: What is the type of log that has a destination port number of 52567 and a source IP address of 8.8.8.8?
+
+ATTEMPT-1
+Input: Source Address equals "8.8.8.8" and Destination Port equals "52567"
+Output: A DNS log
+
+Solution: The logtype is DNS
