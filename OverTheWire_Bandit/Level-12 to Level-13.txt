@@ -1,0 +1,68 @@
+Level-12 -> Level-13
+Description: The password for the next level is stored in the file data.txt, which is a hexdump 
+             of a file that has been repeatedly compressed. For this level it may be useful to 
+             create a directory under /tmp in which you can work. Use mkdir with a hard to guess 
+             directory name. Or better, use the command “mktemp -d”. Then copy the datafile using cp, 
+             and rename it using mv (read the manpages!)
+Explanation: In order to effectively decompress various formats we need to use "file" command to 
+             understand the compression method used. Later employ decompression methods to extract the 
+             original file. 
+Connection: ssh -p 2220 bandit12@bandit.labs.overthewire.org
+Command-1: mktemp -d
+Command-2: cp data.txt /tmp/tmp.cfoUL8fHmX
+Command-3: cd /tmp/tmp.cfoUL8fHmX
+Command-4: mv data.txt old_data
+Command-5: file old_data
+Command-6: xxd -r old_data > new_data
+Command-7: ls
+Command-8: file new_data
+new_data: gzip compressed data, was "data2.bin"
+Command-9: mv new_data new_data.gz
+Command-10: ls
+new_data.gz  old_data
+Command-11: gzip -d new_data.gz
+Command-12: ls
+new_data  old_data
+Command-13: file new_data
+new_data: bzip2 compressed data, block size = 900k
+Command-14: bzip2 -d new_data
+Command-15:ls
+new_data.out  old_data
+Command-16: file new_data.out
+new_data.out: gzip compressed data, was "data4.bin"
+Command-17: mv new_data.out new_data.gz
+Command-18: ls
+new_data.gz  old_data
+Command-19: gzip -d new_data.gz
+Command-20: ls
+new_data  old_data
+Command-21: file new_data
+new_data: POSIX tar archive (GNU)
+Command-22: tar -xf new_data
+Command-23: ls
+data5.bin  new_data  old_data
+Command-24: file data5.bin
+data5.bin: POSIX tar archive (GNU)
+Command-25: tar -xf data5.bin
+Command-26: ls
+data5.bin  data6.bin  new_data  old_data
+Command-27: file data6.bin
+data6.bin: bzip2 compressed data, block size = 900k
+Command-28: bzip2 -d data6.bin
+Command-29: ls
+data5.bin  data6.bin.out  new_data  old_data
+Command-30: file data6.bin.out
+data6.bin.out: POSIX tar archive (GNU)
+Command-31: tar -xf data6.bin.out
+Command-32: ls
+data5.bin  data6.bin.out  data8.bin  new_data  old_data
+Command-33: file data8.bin
+data8.bin: gzip compressed data, was "data9.bin"
+Command-34: mv data8.bin data8.gz
+Command-35: gzip -d data8.gz
+Command-36: ls
+data5.bin  data6.bin.out  data8  new_data  old_data
+Command-37: file data8
+data8: ASCII text
+Command-38: cat data8
+Level-13 Password: FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn

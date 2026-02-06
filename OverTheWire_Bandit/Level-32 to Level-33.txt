@@ -1,0 +1,10 @@
+Level-32 -> Level-33
+Description: After all this git stuff, it’s time for another escape. Good luck!
+Explanation: We need to escape the shell in order to execute commands, this can be done by passing
+             "$0" which shifts it to normal bash shell. Once the normal bash shell loads we can run 
+             Command-3 to find the password.
+Connection: ssh -p 2220 bandit32@bandit.labs.overthewire.org 
+Command-1: $0
+Command-2: whoami
+Command-3: cat /etc/bandit_pass/bandit33
+Level-33 Password: tQdtbs5D5i2vJwkO8mEyYEyTL8izoeJ0

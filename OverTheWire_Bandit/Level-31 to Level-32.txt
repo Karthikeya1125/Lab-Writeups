@@ -1,0 +1,34 @@
+Level-31 -> Level-32
+Description: There is a git repository at ssh://bandit31-git@bandit.labs.overthewire.org/home/bandit31-git/repo 
+             via the port 2220. The password for the user bandit31-git is the same as for the user bandit31.
+             From your local machine (not the OverTheWire machine!), clone the repository and find the password 
+             for the next level. This needs git installed locally on your machine.
+Explanation: Install git on your local system and clone the repository. You need to specify the port 2220 after the
+             hostname only then can you access the repository. Carefully look at the syntax of Command-2 for better
+             understanding. 
+             
+             After cloning the repository we list the contents of "README.md" file to find the password which end up
+             with {
+             
+             This time your task is to push a file to the remote repository.
+
+Details:
+    File name: key.txt
+    Content: 'May I come in?'
+    Branch: master
+}    
+             Next we create a "key.txt" file with the mentioned content in the repository. Then we add the file to 
+             staging with a message. Follwing which we commit the file and push it to the branch named "master"
+              
+Connection: You need not connect for this level
+Command-1: sudo apt install git-all
+Command-2: git clone ssh://bandit31-git@bandit.labs.overthewire.org:2220/home/bandit31-git/repo
+Command-3: ls
+Command-4: cd repo
+Command-5: ls
+Command-6: cat README.md
+Command-7: gedit key.txt
+Command-8: git add -f key.txt
+Command-9: git commit -m "Adding key.txt file"
+Command-10: git push origin master
+Level-32 Password: 3O9RfhqyAlVBEZpVb6LYStshZoqoSx5K

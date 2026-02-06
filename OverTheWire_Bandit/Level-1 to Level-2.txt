@@ -1,0 +1,10 @@
+Level-1 -> Level-2
+Description: The goal is to find the password for the next level contained in 
+             a file whose name starts with "-".
+Explanation: Linux interprets "-" command as command line option or flag. 
+            Hence to read the contents of a file name starting with "-" 
+            use "./-<filename>".
+Connection: ssh -p 2220 bandit2@bandit.labs.overthewire.org
+Command-1:ls
+Command-2: cat ./-
+Level-2 Password: 263JGJPfgU6LtdEvgfWU1XP5yac29mFx

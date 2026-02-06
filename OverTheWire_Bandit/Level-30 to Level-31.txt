@@ -1,0 +1,23 @@
+Level-30 -> Level-31
+Description: There is a git repository at ssh://bandit30-git@bandit.labs.overthewire.org/home/bandit30-git/repo 
+             via the port 2220. The password for the user bandit27-git is the same as for the user bandit30.
+             From your local machine (not the OverTheWire machine!), clone the repository and find the password 
+             for the next level. This needs git installed locally on your machine.
+Explanation: Install git on your local system and clone the repository. You need to specify the port 2220 after the
+             hostname only then can you access the repository. Carefully look at the syntax of Command-2 for better
+             understanding. 
+             
+             After cloning the repository we list the contents of "README.md" file to find the password which end up
+             with "just an empty file... muahaha". So we list all the remote branches and see that there is a branch
+             called "refs/tags/secret" we will be importing this branch to our local repository and then checkout the branch. 
+Connection: You need not connect for this level
+Command-1: sudo apt install git-all
+Command-2: git clone ssh://bandit30-git@bandit.labs.overthewire.org:2220/home/bandit30-git/repo
+Command-3: ls
+Command-4: cd repo
+Command-5: ls
+Command-6: cat README.md
+Command-7: git ls-remote
+Command-8: git fetch origin /refs/tags/secret
+Command-9: git show secret
+Level-31 Password: fb5S2xb7bRyFmAvQYQGEqsbhVyJqhnDy

@@ -1,0 +1,14 @@
+Level-20 -> Level-21
+Description: There is a setuid binary in the homedirectory that does the following: 
+             it makes a connection to localhost on the port you specify as a commandline argument. 
+             It then reads a line of text from the connection and compares it to the password in the 
+             previous level (bandit20). If the password is correct, it will transmit the password for 
+             the next level (bandit21).
+Explanation: We pass the password of bandit20 to whichever device connects to the listening port.
+             We use "nc -l" command to setup a listening port "1234" on our device. To ensure it
+             runs in the background we use "&". Then we can continue to use our terminal as usual
+Connection: ssh -p 2220 bandit20@bandit.labs.overthewire.org
+Command-1: ls -l
+Command-2: echo "0qXahG8ZjOVMN9Ghs7iOWsCfZyXOUbYO" | nc -l -p 1234 &
+Command-3: ./suconnect 1234
+Level-21 Password: EeoULMCra2q0dSkYj561DX7s1CpBuOBt

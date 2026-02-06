@@ -1,0 +1,8 @@
+Level-14 -> Level-15
+Description: The password for the next level can be retrieved by submitting the password of the current level 
+             to port 30000 on localhost.
+Explanation: To pass this level we need to use "telnet" command to connect to the localhost and enter current 
+             level password.
+Connection: ssh -p 2220 bandit14@bandit.labs.overthewire.org
+Command-1: telnet localhost 30000
+Level-15 Password: 8xCjnmgoKbGLhHFAZlGE5Tmu4M2tKJQo

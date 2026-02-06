@@ -1,0 +1,20 @@
+Level-28 -> Level-29
+Description: There is a git repository at ssh://bandit28-git@bandit.labs.overthewire.org/home/bandit28-git/repo 
+             via the port 2220. The password for the user bandit27-git is the same as for the user bandit28.
+             From your local machine (not the OverTheWire machine!), clone the repository and find the password 
+             for the next level. This needs git installed locally on your machine.
+Explanation: Install git on your local system and clone the repository. You need to specify the port 2220 after the
+             hostname only then can you access the repository. Carefully look at the syntax of Command-2 for better
+             understanding. After cloning the repository we list the contents of "README.md" file to find the password 
+             being replaced by placeholders. We can check the previous version of the file to get the password. We use
+             Command-7 to understand the commits and Command-8 to move back to the file's previous version.          
+Connection: You need not connect for this level
+Command-1: sudo apt install git-all
+Command-2: git clone ssh://bandit28-git@bandit.labs.overthewire.org:2220/home/bandit28-git/repo
+Command-3: ls
+Command-4: cd repo
+Command-5: ls
+Command-6: cat README.md
+Command-7: git log
+Command-8: git checkout d0cf2ab7dd7ebc6075b59102a980155268f0fe8f
+Level-29 Password: 4pT1t5DENaYuqnqvadYs1oE4QLCdjmJ7

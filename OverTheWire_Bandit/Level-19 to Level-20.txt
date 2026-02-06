@@ -1,0 +1,13 @@
+Level-19 -> Level-20
+Description: To gain access to the next level, you should use the setuid binary in the homedirectory. 
+             Execute it without arguments to find out how to use it. The password for this level 
+             can be found in the usual place (/etc/bandit_pass), after you have used the setuid binary.
+Explanation: Determine the file permissions using "ls -l" command. The permissions include "s" bit set 
+             which means we can run commands with the privileges of user "bandit20" rather than the privileges
+             of current user "bandit19" 
+Connection: ssh -p 2220 bandit19@bandit.labs.overthewire.org
+Command-1: ls
+Command-2: ls -l bandit20-do
+Command-3: ./bandit20-do
+Command-4: ./bandit20-do cat /etc/bandit_pass/bandit20
+Level-20 Password: 0qXahG8ZjOVMN9Ghs7iOWsCfZyXOUbYO

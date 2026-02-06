@@ -1,0 +1,29 @@
+Level-29 -> Level-30
+Description: There is a git repository at ssh://bandit29-git@bandit.labs.overthewire.org/home/bandit29-git/repo 
+             via the port 2220. The password for the user bandit27-git is the same as for the user bandit29.
+             From your local machine (not the OverTheWire machine!), clone the repository and find the password 
+             for the next level. This needs git installed locally on your machine.
+Explanation: Install git on your local system and clone the repository. You need to specify the port 2220 after the
+             hostname only then can you access the repository. Carefully look at the syntax of Command-2 for better
+             understanding. 
+             
+             After cloning the repository we list the contents of "README.md" file to find the password 
+             being replaced by "<no passwords in production!>". This means the password is visible in other branches. 
+             Git contains several non-production branches in which development takes palce before the changes are pushed
+             into the production branch(master). 
+             
+             Find all the other branches(including hidden) using Command-7. 
+             Next we notice that there is a "development" branch called "dev" which has a high probability that the 
+             passwords are stored in plaintext before being removed when pushed into production. Switch to the "dev"
+             branch and read the password in the "README.md" file.    
+Connection: You need not connect for this level
+Command-1: sudo apt install git-all
+Command-2: git clone ssh://bandit29-git@bandit.labs.overthewire.org:2220/home/bandit29-git/repo
+Command-3: ls
+Command-4: cd repo
+Command-5: ls
+Command-6: cat README.md
+Command-7: git checkout -a
+Command-8: git checkout remotes/origin/dev
+Command-9: cat README.md
+Level-30 Password: qp30ex3VLz5MDG1n91YowTv4Q8l7CDZL

