@@ -1,0 +1,10 @@
+Level-7 -> Level-8
+Description: The password for the next level is stored in the 
+             file data.txt next to the word millionth
+Explanation: Use "cat" command to read the content of the "data.txt"   
+             and filter the read content using "grep" to find the string 
+             next to the word "millionth"
+Connection: ssh -p 2220 bandit7@bandit.labs.overthewire.org
+Command-1: ls
+Command-2: cat data.txt | grep millionth
+Level-8 Password: dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc

@@ -1,0 +1,8 @@
+Level-8 -> Level-9
+Description: The password for the next level is stored in the file data.txt and 
+             is the only line of text that occurs only once
+Explanation: The "sort" command sorts the text alphabetically and pipes the output
+             to "uniq -u" command which in turn skips lines having duplicates.
+Connection: ssh -p 2220 bandit8@bandit.labs.overthewire.org
+Command-1: sort data.txt | uniq -u
+Level-9 Password: 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
